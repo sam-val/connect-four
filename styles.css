@@ -1,0 +1,37 @@
+*, *::after, *::before {
+    box-sizing: border-box;
+}
+
+
+
+.grid {
+    display: flex;
+    width: calc(50px * 7);
+    flex-wrap: wrap;
+}
+
+.red {
+
+    content: url("imgs/red_black.png");
+}
+.blue {
+
+    content: url("imgs/blue_black.png");
+}
+
+.red_top {
+    content: url("imgs/red_white.png");
+}
+
+.blue_top {
+    content: url("imgs/blue_white.png");
+}
+.white {
+    content: url("imgs/white.png");
+}
+
+.default {
+    content: url("imgs/white_black.png");
+}
+
+
