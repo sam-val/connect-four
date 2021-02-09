@@ -25,6 +25,7 @@ function make_board() {
 
             square.addEventListener("click", click_square);
             square.addEventListener("mouseover", function() {
+                console.log('hello');
                 hover_square(this);
             });
 
@@ -89,7 +90,6 @@ function reset_game() {
 
 function hover_square(square) {
     let [x,y] = get_cords(square);
-
     if ( hovered_square != null) {
         // reset img:
         hovered_square.className = "";
@@ -115,77 +115,102 @@ function check_board(current_square) {
     let rs = false;
 
     // check horizontally:
-    for(let j=0; j < 2; j++) {
-        for(let i=1; i <= 3;i++) {
-            let new_i = i;
-            if (j == 1) {
-                new_i = i * -1; 
+    var n = 0;
+    previous = false;
+    for(let i = 0; i < GRID_W; i++) {
+        let on_square = squares[y*GRID_W + i];
+        if (on_square.classList.contains(colour)) {
+            if (n === 0 || (previous === true)) {
+                n++;
             }
-            let new_x = x + new_i;
-            if (GRID_W-1 >= new_x && new_x >= 0) {
-                let on_square = squares[y*GRID_W + new_x];
-                if (!on_square.classList.contains(colour)) {
-                    break;
-                }else {
-                    if (Math.abs(new_x - x) >= 3) {
-                        return rs = colour;
-                    }
-                }
-            }
+            previous = true;
+        } else {
+            previous = false;
+            n = 0;
+        }
+        if (n > 3) {
+            return rs = colour;
         }
     }
+    n = 0;
+    previous = false;
 
     // check vertically:
-    for(let j=0; j < 2; j++) {
-        for(let i=1; i <= 3;i++) {
-            let new_i = i;
-            if (j == 1) {
-                new_i = i * -1; 
+    for(let i = 1; i < GRID_H+1; i++) {
+        console.log("n is ", n);
+        let on_square = squares[i*GRID_W + x];
+        if (on_square.classList.contains(colour)) {
+            if (n === 0 || (previous === true)) {
+                n++;
             }
-            let new_y = y + new_i;
-            if (GRID_H >= new_y && new_y >= 1) {
-                let on_square = squares[new_y*GRID_W + x];
-                if (!on_square.classList.contains(colour)) {
-                    break;
-                }else {
-                    if (Math.abs(new_y - y) >= 3) {
-                        return rs = colour;
-                    }
-                }
-            }
-
+            previous = true;
+        } else {
+            previous = false;
+            n = 0;
         }
-        
+        if (n > 3) {
+            return rs = colour;
+        }
     }
+    n = 0;
+    previous = false;
 
     // check diagonally:
-    for(let i=0; i < 4; i++) {
-        for(let j=1; j <=3; j++ ) {
-                let offset_x = j;
-                let offset_y = j;
-                if (i > 1) {
-                    offset_x = j * -1;
-                }
-                if (i % 2 != 0) {
-                    offset_y = j * -1;
-                }
 
-                let new_x = x + offset_x;
-                let new_y = y + offset_y;
-                
-                if (GRID_W-1 >= new_x && new_x >= 0 && GRID_H >= new_y && new_y >= 1) {
-                    let on_square = squares[new_y*GRID_W + new_x];
-                    if (!on_square.classList.contains(colour)) {
-                        break;
-                    }else {
-                        if (Math.abs(new_x - x) >= 3) {
-                            return rs = colour;
-                        }
-                    }
-                }
+    // top left diagonal:
+    let left_x = x, left_y= y, right_x = x, right_y = y; 
 
+    while (left_x > 0 && left_y > 1) {
+        left_x--;
+        left_y--;
+    }
+    while(left_x <= GRID_W-1 && left_y <= GRID_H) {
+        console.log(left_x, left_y);
+        let on_square = squares[left_y*GRID_W + left_x];
+        if (on_square.classList.contains(colour)) {
+            if (n === 0 || (previous === true)) {
+                n++;
+            }
+            previous = true;
+        } else {
+            previous = false;
+            n = 0;
         }
+        if (n > 3) {
+            return rs = colour;
+        }
+        left_x++;
+        left_y++;
     }
 
+    n = 0;
+    previous = false;
+
+    // top right diagonal:
+    while (right_x < GRID_W-1 && right_y > 1) {
+        right_x++;
+        right_y--;
+    }
+    while(right_x >= 0 && right_y <= GRID_H) {
+        // console.log(right_x, right_y)
+        let on_square = squares[right_y*GRID_W + right_x];
+        if (n > 3) {
+            return rs = colour;
+        }
+        if (on_square.classList.contains(colour)) {
+            if (n === 0 || (previous === true)) {
+                n++;
+            }
+            previous = true;
+        } else {
+            previous = false;
+            n = 0;
+        }
+        if (n > 3) {
+            return rs = colour;
+        }
+        right_x--;
+        right_y++;
+    }
     return rs;
 }
